@@ -360,7 +360,8 @@ Terminal.defaults = {
   disableStdin: false,
   useFlowControl: false,
   tabStopWidth: 8,
-  focusOnOpen: true
+  focusOnOpen: true,
+  readOnly: false
   // programFeatures: false,
   // focusKeys: false,
 };
@@ -502,12 +503,14 @@ Terminal.prototype.initGlobal = function() {
   on(this.element, 'copy', function (ev) {
     copyHandler.call(this, ev, term);
   });
-  on(this.textarea, 'paste', function (ev) {
-    pasteHandler.call(this, ev, term);
-  });
-  on(this.element, 'paste', function (ev) {
-    pasteHandler.call(this, ev, term);
-  });
+  if (!this.options.readOnly) {
+    on(this.textarea, 'paste', function (ev) {
+      pasteHandler.call(this, ev, term);
+    });
+    on(this.element, 'paste', function (ev) {
+      pasteHandler.call(this, ev, term);
+    });
+  }
 
   function rightClickHandlerWrapper (ev) {
     rightClickHandler.call(this, ev, term);
@@ -1097,7 +1100,7 @@ Terminal.prototype.queueLinkification = function(start, end) {
  * Display the cursor element
  */
 Terminal.prototype.showCursor = function() {
-  if (!this.cursorState) {
+  if (!this.cursorState && !this.options.readOnly) {
     this.cursorState = 1;
     this.refresh(this.y, this.y);
   }
