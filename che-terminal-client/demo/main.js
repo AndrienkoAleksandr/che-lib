@@ -81,32 +81,39 @@ function createTerminal() {
   });
 
   term.open(terminalContainer);
+
   term.fit();
 
-  console.log(term.rowContainerWrapper.clientHeight);
-  console.log("height:= " + Math.floor((term.element.clientHeight - 15)/term.charMeasure.height));
+  //console.log(term.parent.clientHeight);
+  // console.log("height:= " + Math.floor((term.element.clientHeight - 15)/term.charMeasure.height));
 //  term.resize();
 
   var i;
+  term.writeln("testA");
+  term.writeln("testB");
 
   // term.writeln("Test for test");
-  //term.writeln("\u001B[31;1;4mTest\u001B[0mffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffkkk8");
-
-  for (i = 1; i <= 21; i++) {
-    term.writeln("line " + i);
+  // term.writeln("\u001B[31;1;4mTest\u001B[0mffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffkkk8");
+  //
+  for (i = 1; i <= 31; i++) {
+    term.writeln("test " + i);
   }
-
-  term.writeln("first line");
-
-   // console.log(term.lines);
-   // console.log("vertical scroll width = " + term.verticalScrollWidth);
-   // term.resize(88, 24);
-   // term.writeln("test");
+  //
+  // term.writeln("first line");
+  //
+  // console.log(term.lines);
+  // console.log("vertical scroll width = " + term.verticalScrollWidth);
+  // //term.resize(88, 24);
+  // term.writeln("test");
   // term.writeln("Test for ");
-  //console.log("Step " + term.cols);
-
-
-  term.writeln("\u001B[31;1;4mTest\u001B[0mffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa");
+  // console.log("Step " + term.cols);
+  //
+  //
+  term.writeln("\u001B[31;1;4mTest\u001B[0mfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffWWW");
   // term.writeln("test");
   // term.writeln("Next line");
+  //
+  // for (i = 1; i <= 4; i++) {
+  //   term.writeln("line " + i);
+  // }
 }

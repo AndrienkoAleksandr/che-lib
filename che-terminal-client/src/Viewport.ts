@@ -13,6 +13,7 @@ export class Viewport {
   private currentRowHeight: number;
   private lastRecordedBufferLength: number;
   private lastRecordedViewportHeight: number;
+  private lastRecordedViewportWidth = 0;
 
   /**
    * Creates a new Viewport.
@@ -56,9 +57,23 @@ export class Viewport {
       const viewportHeightChanged = this.lastRecordedViewportHeight !== this.terminal.rows;
       if (rowHeightChanged || viewportHeightChanged) {
         this.lastRecordedViewportHeight = this.terminal.rows;
-        this.viewportElement.style.height = this.charMeasure.height * this.terminal.rows + 'px';
+        let newHeight = this.charMeasure.height * this.terminal.rows;
+        if (this.terminal.readOnly) {
+          //todo don't use magic constant!!!
+            newHeight += 15;
+          }
+        this.viewportElement.style.height = newHeight + 'px';
       }
       this.scrollArea.style.height = (this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
+
+      let quantityRowSymbols = this.terminal.verticalScrollWidth == 0 ? this.terminal.cols : this.terminal.verticalScrollWidth;
+      if (this.lastRecordedViewportWidth !== quantityRowSymbols) {
+        this.lastRecordedViewportWidth = quantityRowSymbols;
+        this.scrollArea.style.width =  Math.ceil(quantityRowSymbols * this.charMeasure.width) + 'px';
+        console.log("quantityRowSymbols " + quantityRowSymbols);
+        }
+
+        this.scrollArea.style.height = Math.ceil(this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
     }
   }
 
@@ -75,7 +90,8 @@ export class Viewport {
       this.refresh();
     } else {
       // If size has changed, refresh viewport
-      if (this.charMeasure.height !== this.currentRowHeight) {
+      if (this.charMeasure.height !== this.currentRowHeight ||
+          this.lastRecordedViewportWidth !== this.terminal.verticalScrollWidth) {
         this.refresh();
       }
     }
@@ -96,6 +112,9 @@ export class Viewport {
     const newRow = Math.round(this.viewportElement.scrollTop / this.currentRowHeight);
     const diff = newRow - this.terminal.ydisp;
     this.terminal.scrollDisp(diff, true);
+    if (this.terminal.readOnly) {
+      this.terminal.rowContainerWrapper.scrollLeft = this.viewportElement.scrollLeft;
+    }
   }
 
   /**

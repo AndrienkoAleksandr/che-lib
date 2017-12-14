@@ -52,7 +52,12 @@ export class InputHandler implements IInputHandler {
       // TODO: needs a global min terminal width of 2
       if (this._terminal.x + ch_width - 1 >= this._terminal.cols) {
         // autowrap - DECAWM
-        if (this._terminal.wraparoundMode) {
+        if (this._terminal.readOnly) {
+          if (this._terminal.verticalScrollWidth == 0) {
+            this._terminal.verticalScrollWidth = this._terminal.cols;
+          }
+          this._terminal.verticalScrollWidth++;
+        } else if (this._terminal.wraparoundMode) {
           this._terminal.x = 0;
           this._terminal.y++;
           if (this._terminal.y > this._terminal.scrollBottom) {
@@ -64,6 +69,7 @@ export class InputHandler implements IInputHandler {
             return;
         }
       }
+
       row = this._terminal.y + this._terminal.ybase;
 
       // insert mode: move characters to right

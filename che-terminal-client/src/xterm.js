@@ -126,6 +126,7 @@ function Terminal(options) {
   this.cols = options.cols || options.geometry[0];
   this.rows = options.rows || options.geometry[1];
   this.focusOnOpen = options.focusOnOpen;
+  this.readOnly = options.readOnly;
   this.geometry = [this.cols, this.rows];
 
   if (options.handler) {
@@ -157,8 +158,6 @@ function Terminal(options) {
    * vertical scroll width in readOnly mode.
    */
   this.verticalScrollWidth = 0; // to check after reset...
-
-  this.readOnly = false;
 
   this.cursorState = 0;
   this.cursorHidden = false;
@@ -1281,7 +1280,7 @@ Terminal.prototype.innerWrite = function() {
     this.parser.parse(data);
 
     if (this.verticalScrollWidth > this.cols && this.readOnly) {
-      this.updateRange(this.y);;
+      this.updateRange(this.y);
       console.log("before resize");
       this.resize(this.verticalScrollWidth, this.rows);// todo resize?
     } {
