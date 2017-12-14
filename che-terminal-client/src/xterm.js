@@ -152,11 +152,13 @@ function Terminal(options) {
    * The cursor's y position after ybase
    */
   this.y = 0;
-  
+
   /**
    * vertical scroll width in readOnly mode.
    */
   this.verticalScrollWidth = 0; // to check after reset...
+
+  this.readOnly = false;
 
   this.cursorState = 0;
   this.cursorHidden = false;
@@ -450,7 +452,7 @@ Terminal.prototype.setOption = function(key, value) {
       this.element.classList.toggle(`xterm-cursor-style-bar`, value === 'bar');
       break;
     case 'tabStopWidth': this.setupStops(); break;
-    case 'readOnly': this.readOnly = true;
+    case 'readOnly': this.readOnly = value;
   }
 };
 
@@ -637,7 +639,6 @@ Terminal.prototype.open = function(parent) {
   this.rowContainer.classList.add('xterm-rows');
 
   this.rowContainerWrapper = document.createElement('div');
-  // this.rowContainerWrapper.id = "rows-wrapper";
   this.rowContainerWrapper.classList.add("rows-wrapper");
   if (this.readOnly) {
     this.rowContainerWrapper.classList.add("read-only-rows-wrapper");
@@ -1277,8 +1278,6 @@ Terminal.prototype.innerWrite = function() {
     this.refreshStart = this.y;
     this.refreshEnd = this.y;
 
-    // console.log("Amount cols: " + this.cols);
-    var oldCols = this.cols;
     this.parser.parse(data);
 
     if (this.verticalScrollWidth > this.cols && this.readOnly) {
