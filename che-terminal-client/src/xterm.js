@@ -152,6 +152,11 @@ function Terminal(options) {
    * The cursor's y position after ybase
    */
   this.y = 0;
+  
+  /**
+   * vertical scroll width in readOnly mode.
+   */
+  this.verticalScrollWidth = 0; // to check after reset...
 
   this.cursorState = 0;
   this.cursorHidden = false;
@@ -360,7 +365,8 @@ Terminal.defaults = {
   disableStdin: false,
   useFlowControl: false,
   tabStopWidth: 8,
-  focusOnOpen: true
+  focusOnOpen: true,
+  readOnly: false
   // programFeatures: false,
   // focusKeys: false,
 };
@@ -444,6 +450,7 @@ Terminal.prototype.setOption = function(key, value) {
       this.element.classList.toggle(`xterm-cursor-style-bar`, value === 'bar');
       break;
     case 'tabStopWidth': this.setupStops(); break;
+    case 'readOnly': this.readOnly = true;
   }
 };
 
@@ -502,12 +509,14 @@ Terminal.prototype.initGlobal = function() {
   on(this.element, 'copy', function (ev) {
     copyHandler.call(this, ev, term);
   });
-  on(this.textarea, 'paste', function (ev) {
-    pasteHandler.call(this, ev, term);
-  });
-  on(this.element, 'paste', function (ev) {
-    pasteHandler.call(this, ev, term);
-  });
+  if (!this.options.readOnly) {
+    on(this.textarea, 'paste', function (ev) {
+      pasteHandler.call(this, ev, term);
+    });
+    on(this.element, 'paste', function (ev) {
+      pasteHandler.call(this, ev, term);
+    });
+  }
 
   function rightClickHandlerWrapper (ev) {
     rightClickHandler.call(this, ev, term);
@@ -610,11 +619,13 @@ Terminal.prototype.open = function(parent) {
   this.element.classList.add('xterm-theme-' + this.theme);
   this.element.classList.toggle('xterm-cursor-blink', this.options.cursorBlink);
 
-  this.element.style.height
   this.element.setAttribute('tabindex', 0);
 
   this.viewportElement = document.createElement('div');
   this.viewportElement.classList.add('xterm-viewport');
+  if (this.readOnly) {
+    this.viewportElement.classList.add("read-only-viewport");
+  }
   this.element.appendChild(this.viewportElement);
   this.viewportScrollArea = document.createElement('div');
   this.viewportScrollArea.classList.add('xterm-scroll-area');
@@ -624,7 +635,16 @@ Terminal.prototype.open = function(parent) {
   // produce the lines the lines.
   this.rowContainer = document.createElement('div');
   this.rowContainer.classList.add('xterm-rows');
-  this.element.appendChild(this.rowContainer);
+
+  this.rowContainerWrapper = document.createElement('div');
+  // this.rowContainerWrapper.id = "rows-wrapper";
+  this.rowContainerWrapper.classList.add("rows-wrapper");
+  if (this.readOnly) {
+    this.rowContainerWrapper.classList.add("read-only-rows-wrapper");
+  }
+  this.rowContainerWrapper.appendChild(this.rowContainer);
+  this.element.appendChild(this.rowContainerWrapper);
+
   this.children = [];
   this.linkifier = new Linkifier(document, this.children);
 
@@ -1097,7 +1117,7 @@ Terminal.prototype.queueLinkification = function(start, end) {
  * Display the cursor element
  */
 Terminal.prototype.showCursor = function() {
-  if (!this.cursorState) {
+  if (!this.cursorState && !this.options.readOnly) {
     this.cursorState = 1;
     this.refresh(this.y, this.y);
   }
@@ -1257,10 +1277,18 @@ Terminal.prototype.innerWrite = function() {
     this.refreshStart = this.y;
     this.refreshEnd = this.y;
 
+    // console.log("Amount cols: " + this.cols);
+    var oldCols = this.cols;
     this.parser.parse(data);
 
-    this.updateRange(this.y);
-    this.refresh(this.refreshStart, this.refreshEnd);
+    if (this.verticalScrollWidth > this.cols && this.readOnly) {
+      this.updateRange(this.y);;
+      console.log("before resize");
+      this.resize(this.verticalScrollWidth, this.rows);// todo resize?
+    } {
+      this.updateRange(this.y);
+      this.refresh(this.refreshStart, this.refreshEnd);
+    }
   }
   if (this.writeBuffer.length > 0) {
     // Allow renderer to catch up before processing the next batch

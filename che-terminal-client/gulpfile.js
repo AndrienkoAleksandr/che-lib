@@ -44,7 +44,7 @@ gulp.task('browserify', ['tsc'], function() {
   var browserifyOptions = {
     basedir: buildDir,
     debug: true,
-    entries: ['../lib/xterm.js', '../lib/addons/fit/fit.js'],
+    entries: ['../lib/xterm.js', '../lib/addons/fit/fit.js', '../lib/addons/attach/attach.js'],
     standalone: 'Terminal',
     cache: {},
     packageCache: {}
@@ -54,7 +54,7 @@ gulp.task('browserify', ['tsc'], function() {
     .pipe(source('xterm.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true, sourceRoot: '..'}))
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(buildDir));
 });

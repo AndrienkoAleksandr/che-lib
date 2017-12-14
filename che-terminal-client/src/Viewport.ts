@@ -11,7 +11,9 @@ import { CharMeasure } from './utils/CharMeasure';
  */
 export class Viewport {
   private currentRowHeight: number;
+  private currentRowWidth: number;
   private lastRecordedBufferLength: number;
+  private lastRecordedViewportWidth: number;
   private lastRecordedViewportHeight: number;
 
   /**
@@ -28,8 +30,10 @@ export class Viewport {
     private charMeasure: CharMeasure
   ) {
     this.currentRowHeight = 0;
+    this.currentRowWidth = 0;
     this.lastRecordedBufferLength = 0;
     this.lastRecordedViewportHeight = 0;
+    this.lastRecordedViewportWidth = 0;
 
     this.terminal.on('scroll', this.syncScrollArea.bind(this));
     this.terminal.on('resize', this.syncScrollArea.bind(this));
@@ -46,6 +50,7 @@ export class Viewport {
    *   be created.
    */
   private refresh(): void {
+    // console.log("refresh scroll" + this.lastRecordedBufferLength + "!");
     if (this.charMeasure.height > 0) {
       const rowHeightChanged = this.charMeasure.height !== this.currentRowHeight;
       if (rowHeightChanged) {
@@ -56,12 +61,27 @@ export class Viewport {
       const viewportHeightChanged = this.lastRecordedViewportHeight !== this.terminal.rows;
       if (rowHeightChanged || viewportHeightChanged) {
         this.lastRecordedViewportHeight = this.terminal.rows;
-        this.viewportElement.style.height = this.charMeasure.height * this.terminal.rows + 'px';
+        let newHeight = this.charMeasure.height * this.terminal.rows;
+        if (this.terminal.readOnly) {
+          //todo don't use magic constant!!!
+          newHeight += 15;
+        }
+        this.viewportElement.style.height = newHeight + 'px';
       }
-      this.scrollArea.style.height = (this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
+      // todo improve 0 zero value ...
+
+      let quantityRowSymbols = this.terminal.verticalScrollWidth == 0 ? this.terminal.cols : this.terminal.verticalScrollWidth;
+      if (this.lastRecordedViewportWidth !== quantityRowSymbols) {
+        this.lastRecordedViewportWidth = quantityRowSymbols;
+        this.scrollArea.style.width =  Math.ceil(quantityRowSymbols * this.charMeasure.width) + 'px';
+        console.log("quantityRowSymbols" + quantityRowSymbols);
+      }
+
+      this.scrollArea.style.height = Math.ceil(this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
     }
   }
 
+  //todo create separated method to handle vertical scrolling size.
   /**
    * Updates dimensions and synchronizes the scroll area if necessary.
    */
@@ -75,12 +95,13 @@ export class Viewport {
       this.refresh();
     } else {
       // If size has changed, refresh viewport
-      if (this.charMeasure.height !== this.currentRowHeight) {
+      if (this.charMeasure.height !== this.currentRowHeight || this.lastRecordedViewportWidth !== this.terminal.verticalScrollWidth) {
         this.refresh();
       }
     }
 
     // Sync scrollTop
+    console.log(this.terminal.ydisp * this.currentRowHeight + " current scrollTop " + this.viewportElement.scrollTop);
     const scrollTop = this.terminal.ydisp * this.currentRowHeight;
     if (this.viewportElement.scrollTop !== scrollTop) {
       this.viewportElement.scrollTop = scrollTop;
@@ -96,6 +117,7 @@ export class Viewport {
     const newRow = Math.round(this.viewportElement.scrollTop / this.currentRowHeight);
     const diff = newRow - this.terminal.ydisp;
     this.terminal.scrollDisp(diff, true);
+    this.terminal.rowContainerWrapper.scrollLeft = this.viewportElement.scrollLeft;
   }
 
   /**
