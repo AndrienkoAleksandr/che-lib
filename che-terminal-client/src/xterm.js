@@ -21,6 +21,7 @@ import { Parser } from './Parser';
 import { Renderer } from './Renderer';
 import { Linkifier } from './Linkifier';
 import { CharMeasure } from './utils/CharMeasure';
+import { ScrollBarMeasure } from './utils/ScrollBarMeasure';
 import * as Browser from './utils/Browser';
 import * as Keyboard from './utils/Keyboard';
 import { CHARSETS } from './Charsets';
@@ -686,6 +687,9 @@ Terminal.prototype.open = function(parent) {
     self.updateCharSizeCSS();
   });
   this.charMeasure.measure();
+
+  this.scrollBarMeasure = new ScrollBarMeasure(document, this.helperContainer);
+  this.scrollBarMeasure.measure();
 
   this.viewport = new Viewport(this, this.viewportElement, this.viewportScrollArea, this.charMeasure);
   this.renderer = new Renderer(this);

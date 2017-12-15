@@ -56,6 +56,12 @@ export interface ICharMeasure {
   measure(): void;
 }
 
+export interface IScrollBarMeasure {
+  verticalWidth: number;
+  horizontalWidth: number;
+  measure(): void;
+}
+
 export interface ILinkifier {
   linkifyRow(rowIndex: number): void;
   attachHypertextLinkHandler(handler: LinkMatcherHandler): void;

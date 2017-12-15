@@ -53,7 +53,9 @@
         geometry;
 
     if (term.readOnly) {
-      availableHeight -= 15
+      availableHeight -= 15;
+      console.log(term.scrollBarMeasure.getHorizontalWidth() + "$$$$$$$$$$$$");
+      console.log(term.charMeasure.width + "fff");
     }
 
     subjectRow.style.display = 'inline';
