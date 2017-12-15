@@ -3,10 +3,12 @@
  * @license MIT
  */
 
+import { EventEmitter } from '../EventEmitter.js';
+
 /**
  * Utility class to measures the width of the vertical and horizontal scrollBars.
  */
-export class ScrollBarMeasure {
+export class ScrollBarMeasure extends EventEmitter {
   private _document: Document;
   private _parentElement: HTMLElement;
   private _measureElement: HTMLElement;
@@ -15,6 +17,7 @@ export class ScrollBarMeasure {
   private _horizontalWidth: number;
 
   constructor(document: Document, parentElement: HTMLElement) {
+    super();
     this._document = document;
     this._parentElement = parentElement;
   }
@@ -27,12 +30,12 @@ export class ScrollBarMeasure {
     return this._horizontalWidth;
   }
 
-  public measure() :void {
+  public measure(): void {
     if (!this._measureElement) {
-      this._measureElement = document.createElement("div");
-      this._measureElement.style.visibility = "hidden";
-      this._measureElement.style.width = "150px";
-      this._measureElement.style.height = "150px";
+      this._measureElement = document.createElement('div');
+      this._measureElement.style.visibility = 'hidden';
+      this._measureElement.style.width = '150px';
+      this._measureElement.style.height = '150px';
       this._parentElement.appendChild(this._measureElement);
 
       // Perform _doMeasure async if the element was just attached as sometimes
@@ -53,14 +56,14 @@ export class ScrollBarMeasure {
     }
 
     // create child element
-    this._childMeasureElement = document.createElement("div");
-    this._childMeasureElement.style.width = "100%";
-    this._childMeasureElement.style.height = "100%";
+    this._childMeasureElement = document.createElement('div');
+    this._childMeasureElement.style.width = '100%';
+    this._childMeasureElement.style.height = '100%';
 
     this._measureElement.appendChild(this._childMeasureElement);
 
     // activate scroll
-    this._measureElement.style.overflow = "scroll";
+    this._measureElement.style.overflow = 'scroll';
 
     const widthWithScroll = this._childMeasureElement.offsetWidth;
     const heigthWithScroll = this._childMeasureElement.offsetHeight;
@@ -68,10 +71,11 @@ export class ScrollBarMeasure {
     const verticalWidth = widthWithoutScroll - widthWithScroll;
     const horizontalWidth = heigthWithoutScroll - heigthWithScroll;
 
-    if (this._verticalWidth != verticalWidth || this._horizontalWidth != horizontalWidth) {
+    if (this._verticalWidth !== verticalWidth || this._horizontalWidth !== horizontalWidth) {
       this._verticalWidth = verticalWidth;
       this._horizontalWidth = horizontalWidth;
-      console.log("Measure scrollBar: " + this._verticalWidth + " " + this._horizontalWidth);
+      console.log('Measure scrollBar: ' + this._verticalWidth + ' ' + this._horizontalWidth);
+      this.emit('scrollbarsizechanged');
     }
   }
 }

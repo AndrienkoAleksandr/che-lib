@@ -37,7 +37,7 @@
     }
     var parentElementStyle = window.getComputedStyle(term.element.parentElement),
         parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height')),
-        parentElementWidth = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')) - 15),
+        parentElementWidth = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')) - (term.scrollBarMeasure.getVerticalWidth() || 15)),
         elementStyle = window.getComputedStyle(term.element),
         elementPaddingVer = parseInt(elementStyle.getPropertyValue('padding-top')) + parseInt(elementStyle.getPropertyValue('padding-bottom')),
         elementPaddingHor = parseInt(elementStyle.getPropertyValue('padding-right')) + parseInt(elementStyle.getPropertyValue('padding-left')),
@@ -53,9 +53,7 @@
         geometry;
 
     if (term.readOnly) {
-      availableHeight -= 15;
-      console.log(term.scrollBarMeasure.getHorizontalWidth() + "$$$$$$$$$$$$");
-      console.log(term.charMeasure.width + "fff");
+      availableHeight -= term.scrollBarMeasure.getHorizontalWidth() || 15;
     }
 
     subjectRow.style.display = 'inline';

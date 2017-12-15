@@ -48,10 +48,10 @@
     bottom: 0;
 }
 
-.read-only-rows-wrapper {
-    right: 15px;
-    bottom: 15px;
-}
+/*.read-only-rows-wrapper {*/
+    /*right: 15px;*/
+    /*bottom: 15px;*/
+/*}*/
 
 .terminal {
     background-color: #000;
@@ -179,9 +179,9 @@
     overflow-y: scroll;
 }
 
-.read-only-viewport {
-    overflow-x: scroll;
-}
+/*.read-only-viewport {*/
+    /*overflow-x: scroll;*/
+/*}*/
 
 .terminal .xterm-wide-char {
     display: inline-block;

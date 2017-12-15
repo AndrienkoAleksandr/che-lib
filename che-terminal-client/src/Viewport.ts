@@ -4,6 +4,7 @@
 
 import { ITerminal } from './Interfaces';
 import { CharMeasure } from './utils/CharMeasure';
+import { ScrollBarMeasure } from './utils/ScrollBarMeasure';
 
 /**
  * Represents the viewport of a terminal, the visible area within the larger buffer of output.
@@ -26,7 +27,8 @@ export class Viewport {
     private terminal: ITerminal,
     private viewportElement: HTMLElement,
     private scrollArea: HTMLElement,
-    private charMeasure: CharMeasure
+    private charMeasure: CharMeasure,
+    private scrollBarMeasure: ScrollBarMeasure
   ) {
     this.currentRowHeight = 0;
     this.lastRecordedBufferLength = 0;
@@ -59,21 +61,19 @@ export class Viewport {
         this.lastRecordedViewportHeight = this.terminal.rows;
         let newHeight = this.charMeasure.height * this.terminal.rows;
         if (this.terminal.readOnly) {
-          //todo don't use magic constant!!!
-            newHeight += 15;
+            newHeight += this.scrollBarMeasure.getHorizontalWidth() || 15;
           }
         this.viewportElement.style.height = newHeight + 'px';
       }
       this.scrollArea.style.height = (this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
 
-      let quantityRowSymbols = this.terminal.verticalScrollWidth == 0 ? this.terminal.cols : this.terminal.verticalScrollWidth;
+      let quantityRowSymbols = this.terminal.verticalScrollWidth === 0 ? this.terminal.cols : this.terminal.verticalScrollWidth;
       if (this.lastRecordedViewportWidth !== quantityRowSymbols) {
         this.lastRecordedViewportWidth = quantityRowSymbols;
         this.scrollArea.style.width =  Math.ceil(quantityRowSymbols * this.charMeasure.width) + 'px';
-        console.log("quantityRowSymbols " + quantityRowSymbols);
-        }
+      }
 
-        this.scrollArea.style.height = Math.ceil(this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
+      this.scrollArea.style.height = Math.ceil(this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
     }
   }
 

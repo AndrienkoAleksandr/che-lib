@@ -626,7 +626,8 @@ Terminal.prototype.open = function(parent) {
   this.viewportElement = document.createElement('div');
   this.viewportElement.classList.add('xterm-viewport');
   if (this.readOnly) {
-    this.viewportElement.classList.add("read-only-viewport");
+    //this.viewportElement.classList.add("read-only-viewport");
+    this.viewportElement.style.overflowX = "scroll";
   }
   this.element.appendChild(this.viewportElement);
   this.viewportScrollArea = document.createElement('div');
@@ -640,9 +641,6 @@ Terminal.prototype.open = function(parent) {
 
   this.rowContainerWrapper = document.createElement('div');
   this.rowContainerWrapper.classList.add("rows-wrapper");
-  if (this.readOnly) {
-    this.rowContainerWrapper.classList.add("read-only-rows-wrapper");
-  }
   this.rowContainerWrapper.appendChild(this.rowContainer);
   this.element.appendChild(this.rowContainerWrapper);
 
@@ -689,9 +687,12 @@ Terminal.prototype.open = function(parent) {
   this.charMeasure.measure();
 
   this.scrollBarMeasure = new ScrollBarMeasure(document, this.helperContainer);
+  this.scrollBarMeasure.on('scrollbarsizechanged', function () {
+    self.updateReadOnlyCSS();
+  });
   this.scrollBarMeasure.measure();
 
-  this.viewport = new Viewport(this, this.viewportElement, this.viewportScrollArea, this.charMeasure);
+  this.viewport = new Viewport(this, this.viewportElement, this.viewportScrollArea, this.charMeasure, this.scrollBarMeasure);
   this.renderer = new Renderer(this);
 
   // Setup loop that draws to screen
@@ -750,6 +751,15 @@ Terminal.loadAddon = function(addon, callback) {
 Terminal.prototype.updateCharSizeCSS = function() {
   this.charSizeStyleElement.textContent = '.xterm-wide-char{width:' + (this.charMeasure.width * 2) + 'px;}';
 }
+
+Terminal.prototype.updateReadOnlyCSS = function () {
+  this.rowContainerWrapper.style.right = this.scrollBarMeasure.getVerticalWidth() + "px";
+
+  if (this.readOnly) {
+    this.viewportElement.style.overflowX = "scroll";
+    this.rowContainerWrapper.style.bottom = this.scrollBarMeasure.getHorizontalWidth() + "px";
+  }
+};
 
 /**
  * XTerm mouse events
