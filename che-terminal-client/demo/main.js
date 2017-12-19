@@ -1,10 +1,20 @@
-var term,
-  protocol,
-  socketURL,
-  socket,
-  pid;
+var term;
+
+Split(['#left', '#right'], {
+  direction: 'horizontal',
+  sizes: [50, 50],
+  minSize: 1
+});
+
+Split(['#top', '#bottom'], {
+  direction: 'vertical',
+  sizes: [50, 50],
+  minSize: 1
+});
 
 var terminalContainer = document.getElementById('terminal-container'),
+  verticalResizer = document.getElementsByClassName('gutter gutter-vertical')[0],
+  horizontalResizer = document.getElementsByClassName('gutter gutter-horizontal')[0],
   actionElements = {
     findNext: document.querySelector('#find-next'),
     findPrevious: document.querySelector('#find-previous')
@@ -15,25 +25,7 @@ var terminalContainer = document.getElementById('terminal-container'),
     scrollback: document.querySelector('#option-scrollback'),
     tabstopwidth: document.querySelector('#option-tabstopwidth'),
     bellStyle: document.querySelector('#option-bell-style')
-  },
-  colsElement = document.getElementById('cols'),
-  rowsElement = document.getElementById('rows');
-
-function setTerminalSize() {
-  var cols = parseInt(colsElement.value, 10);
-  var rows = parseInt(rowsElement.value, 10);
-  var viewportElement = document.querySelector('.xterm-viewport');
-  var scrollBarWidth = viewportElement.offsetWidth - viewportElement.clientWidth;
-  var width = (cols * term.charMeasure.width + 20 /*room for scrollbar*/ ).toString() + 'px';
-  var height = (rows * term.charMeasure.height).toString() + 'px';
-
-  terminalContainer.style.width = width;
-  terminalContainer.style.height = height;
-  term.resize(cols, rows);
-}
-
-colsElement.addEventListener('change', setTerminalSize);
-rowsElement.addEventListener('change', setTerminalSize);
+  };
 
 actionElements.findNext.addEventListener('keypress', function(e) {
   if (e.key === "Enter") {
@@ -63,6 +55,38 @@ optionElements.scrollback.addEventListener('change', function() {
 optionElements.tabstopwidth.addEventListener('change', function() {
   term.setOption('tabStopWidth', parseInt(optionElements.tabstopwidth.value, 10));
 });
+
+function resize() {
+  verticalResizer.addEventListener('mousedown', initResize, false);
+  horizontalResizer.addEventListener('mousedown', initResize, false);
+
+    function initResize(e) {
+        window.addEventListener('mousemove', Resize, false);
+        window.addEventListener('mouseup', stopResize, false);
+      }
+
+  function Resize(e) {
+      terminalContainer.style.width = terminalContainer.parentNode.parentElement.width;
+      terminalContainer.style.height = terminalContainer.parentNode.parentElement.height;
+      console.log(terminalContainer.style.width);
+      resizeTerminal();
+    }
+
+  function stopResize(e) {
+      window.removeEventListener('mousemove', Resize, false);
+      window.removeEventListener('mouseup', stopResize, false);
+    }
+}
+
+resize();
+
+function resizeTerminal() {
+  var initialGeometry = term.proposeGeometry(),
+  cols = term.verticalScrollWidth,
+  rows = initialGeometry.rows;
+  console.log("Resize: cols= " + initialGeometry.verticalScrollWidth);
+  term.resize(cols, rows);
+}
 
 createTerminal();
 
@@ -107,9 +131,9 @@ function createTerminal() {
     // // term.writeln("Test for test");
     // term.writeln("\u001B[31;1;4mTest\u001B[0mffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffkkk8");
     // var i;
-    // for (i = 1; i <= 33; i++) {
-    //   term.writeln("test " + i);
-    // }
+    for (i = 1; i <= 20; i++) {
+      term.writeln("test " + i);
+    }
     //
     // term.writeln("first line");
     //

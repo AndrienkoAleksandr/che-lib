@@ -61,9 +61,11 @@ export class Viewport {
         this.lastRecordedViewportHeight = this.terminal.rows;
         let newHeight = this.charMeasure.height * this.terminal.rows;
         if (this.terminal.readOnly) {
-            newHeight += this.scrollBarMeasure.getHorizontalWidth() || 15;
-          }
-        this.viewportElement.style.height = newHeight + 'px';
+          this.viewportElement.style.height = '100%';
+          // newHeight += this.scrollBarMeasure.getHorizontalWidth() || 15;
+        } else {
+          this.viewportElement.style.height = newHeight + 'px';
+        }
       }
       this.scrollArea.style.height = (this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
 
