@@ -82,9 +82,9 @@ resize();
 
 function resizeTerminal() {
   var initialGeometry = term.proposeGeometry(),
-  cols = term.verticalScrollWidth,
+  cols = term.maxLineLength();//term.maxLineWidth,
   rows = initialGeometry.rows;
-  console.log("Resize: cols= " + initialGeometry.verticalScrollWidth);
+  console.log("Resize: cols= " + cols);
   term.resize(cols, rows);
 }
 
@@ -96,11 +96,12 @@ function createTerminal() {
     terminalContainer.removeChild(terminalContainer.children[0]);
   }
   term = new Terminal({
-    rows: 12,
+    rows: 24,
     cols: 80,
     readOnly: true,
+    // scrollback: 20,
     cursorBlink: optionElements.cursorBlink.checked,
-    scrollback: parseInt(optionElements.scrollback.value, 10),
+    // scrollback: parseInt(optionElements.scrollback.value, 10),
     tabStopWidth: parseInt(optionElements.tabstopwidth.value, 10)
   });
 
@@ -134,24 +135,51 @@ function createTerminal() {
     for (i = 1; i <= 20; i++) {
       term.writeln("test " + i);
     }
+    console.log(term.maxLineLength() + " ~!!!!!!!!!!!!!!!!!!!!!!!!!!!!111");
     //
     // term.writeln("first line");
     //
     // console.log(term.lines);
-    // console.log("vertical scroll width = " + term.verticalScrollWidth);
+    // console.log("vertical scroll width = " + term.maxLineWidth);
     // //term.resize(88, 24);
     // term.writeln("test");
     // term.writeln("Test for ");
     // console.log("Step " + term.cols);
     //
     //
-    term.writeln("\u001B[31;1;4mTest\u001B[0mfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffWWW");
+    //term.writeln("\u001B[31;1;4mTest\u001B[0mffffffuuufffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffWWW");
+    //term.writeln("\u001B[31;1;4mTest\u001B[0mfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffWWW");
+    //term.writeln("\u001B[31;1;4mTest\u001B[0mffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffyyyyyyyyyyyyyfffWWW");
     // term.writeln("test");
     // term.writeln("Next line");
     //
     // for (i = 1; i <= 4; i++) {
     //   term.writeln("line " + i);
     // }
+
+    // console.log("____________________________________________");
+    // var max = 0;
+    // this.term.lines._array.forEach(function(elem) {
+    //   if (max < elem.length) {
+    //     max = elem.length;
+    //   }
+    // });
+    // console.log(max);
+    // console.log("____________________________________________");
+    //
+    // max = this.term.lines._array.reduce(function(a, b) {
+    //   return Math.max(a, b.length);
+    // });
+    // console.log(max);
+    // console.log("____________________________________________");
+    console.log(this.term.lines);
+
+    setTimeout(function () {
+      console.log("Max line length " + this.term.maxLineLength());
+      console.log(this.term.cols)
+    }, 1000);
+
+
   }, 0);
 
 }

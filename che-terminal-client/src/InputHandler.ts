@@ -53,10 +53,10 @@ export class InputHandler implements IInputHandler {
       if (this._terminal.x + ch_width - 1 >= this._terminal.cols) {
         // autowrap - DECAWM
         if (this._terminal.readOnly) {
-          if (this._terminal.verticalScrollWidth == 0) {
-            this._terminal.verticalScrollWidth = this._terminal.cols;
+          if (this._terminal.maxLineWidth === 0) {
+            this._terminal.maxLineWidth = this._terminal.cols;
           }
-          this._terminal.verticalScrollWidth++;
+          this._terminal.maxLineWidth++;
         } else if (this._terminal.wraparoundMode) {
           this._terminal.x = 0;
           this._terminal.y++;
@@ -69,8 +69,12 @@ export class InputHandler implements IInputHandler {
             return;
         }
       }
-
-      row = this._terminal.y + this._terminal.ybase;
+      // move this code, I guess it should not be here, but width tracking
+      // if (this._terminal.maxLineWidth <= this._terminal.cols) {
+      //   let availableWidth = this._terminal.parent.clientWidth - this._terminal.scrollBarMeasure.getHorizontalWidth();
+      //   this._terminal.maxLineWidth = Math.floor(availableWidth / this._terminal.charMeasure.width);
+      // }
+      // console.log('Max line width = ' + this._terminal.maxLineWidth);
 
       // insert mode: move characters to right
       if (this._terminal.insertMode) {

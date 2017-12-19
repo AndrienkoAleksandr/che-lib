@@ -27,7 +27,7 @@ export interface ITerminal {
   lines: ICircularList<string>;
   rows: number;
   cols: number;
-  verticalScrollWidth: number;
+  maxLineWidth: number;
   readOnly: boolean;
   browser: IBrowser;
   writeBuffer: string[];

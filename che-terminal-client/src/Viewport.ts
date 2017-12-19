@@ -62,14 +62,13 @@ export class Viewport {
         let newHeight = this.charMeasure.height * this.terminal.rows;
         if (this.terminal.readOnly) {
           this.viewportElement.style.height = '100%';
-          // newHeight += this.scrollBarMeasure.getHorizontalWidth() || 15;
         } else {
           this.viewportElement.style.height = newHeight + 'px';
         }
       }
       this.scrollArea.style.height = (this.charMeasure.height * this.lastRecordedBufferLength) + 'px';
 
-      let quantityRowSymbols = this.terminal.verticalScrollWidth === 0 ? this.terminal.cols : this.terminal.verticalScrollWidth;
+      let quantityRowSymbols = this.terminal.maxLineWidth === 0 ? this.terminal.cols : this.terminal.maxLineWidth;
       if (this.lastRecordedViewportWidth !== quantityRowSymbols) {
         this.lastRecordedViewportWidth = quantityRowSymbols;
         this.scrollArea.style.width =  Math.ceil(quantityRowSymbols * this.charMeasure.width) + 'px';
@@ -93,7 +92,7 @@ export class Viewport {
     } else {
       // If size has changed, refresh viewport
       if (this.charMeasure.height !== this.currentRowHeight ||
-          this.lastRecordedViewportWidth !== this.terminal.verticalScrollWidth) {
+          this.lastRecordedViewportWidth !== this.terminal.maxLineWidth) {
         this.refresh();
       }
     }

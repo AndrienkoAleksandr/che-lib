@@ -158,7 +158,7 @@ function Terminal(options) {
   /**
    * vertical scroll width in readOnly mode.
    */
-  this.verticalScrollWidth = 0; // to check after reset...
+  this.maxLineWidth = 0; // to check after reset...
 
   this.cursorState = 0;
   this.cursorHidden = false;
@@ -1293,10 +1293,10 @@ Terminal.prototype.innerWrite = function() {
 
     this.parser.parse(data);
 
-    if (this.verticalScrollWidth > this.cols && this.readOnly) {
+    if (this.maxLineWidth > this.cols && this.readOnly) {
       this.updateRange(this.y);
       console.log("before resize");
-      this.resize(this.verticalScrollWidth, this.rows);// todo resize?
+      this.resize(this.maxLineWidth, this.rows);// todo resize?
     } {
       this.updateRange(this.y);
       this.refresh(this.refreshStart, this.refreshEnd);
@@ -2078,6 +2078,19 @@ Terminal.prototype.eraseLine = function(y) {
   this.eraseRight(0, y);
 };
 
+Terminal.prototype.maxLineLength = function() {
+  // var max = this.lines._array.reduce(function(a, b) {
+  //   return Math.max(a, b.length);
+  // });
+  // return max;
+  var max = 0;
+  this.lines._array.forEach(function(elem) {
+    if (max < elem.length) {
+      max = elem.length;
+    }
+  });
+  return max;
+};
 
 /**
  * Return the data array of a blank line
