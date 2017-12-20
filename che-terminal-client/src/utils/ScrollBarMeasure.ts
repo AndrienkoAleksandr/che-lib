@@ -34,6 +34,11 @@ export class ScrollBarMeasure extends EventEmitter {
     if (!this._measureElement) {
       this._measureElement = document.createElement('div');
       this._measureElement.style.visibility = 'hidden';
+      this._measureElement.style.position = 'absolute';
+      this._measureElement.style.top = '0';
+      this._measureElement.style.left = '-9999em';
+      this._measureElement.textContent = 'W';
+      this._measureElement.setAttribute('aria-hidden', 'true');
       this._measureElement.style.width = '150px';
       this._measureElement.style.height = '150px';
       this._parentElement.appendChild(this._measureElement);
