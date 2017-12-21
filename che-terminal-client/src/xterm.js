@@ -688,6 +688,7 @@ Terminal.prototype.open = function(parent) {
 
   this.scrollBarMeasure = new ScrollBarMeasure(document, this.helperContainer);
   this.scrollBarMeasure.on('scrollbarsizechanged', function () {
+    self.rowContainerWrapper.style.right = self.scrollBarMeasure.getVerticalWidth() + "px";
     self.updateReadOnlyCSS();
   });
   this.scrollBarMeasure.measure();
@@ -753,8 +754,6 @@ Terminal.prototype.updateCharSizeCSS = function() {
 }
 
 Terminal.prototype.updateReadOnlyCSS = function () {
-  this.rowContainerWrapper.style.right = this.scrollBarMeasure.getVerticalWidth() + "px";
-
   if (this.readOnly) {
     this.viewportElement.style.overflowX = "scroll";
     this.rowContainerWrapper.style.bottom = this.scrollBarMeasure.getHorizontalWidth() + "px";
@@ -2079,10 +2078,6 @@ Terminal.prototype.eraseLine = function(y) {
 };
 
 Terminal.prototype.maxLineLength = function() {
-  // var max = this.lines._array.reduce(function(a, b) {
-  //   return Math.max(a, b.length);
-  // });
-  // return max;
   var max = 0;
   this.lines._array.forEach(function(elem) {
     if (max < elem.length) {

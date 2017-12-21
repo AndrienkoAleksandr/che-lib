@@ -20,6 +20,17 @@ export class ScrollBarMeasure extends EventEmitter {
     super();
     this._document = document;
     this._parentElement = parentElement;
+
+    this._measureElement = document.createElement('div');
+    this._measureElement.style.visibility = 'hidden';
+    this._measureElement.style.position = 'absolute';
+    this._measureElement.style.top = '0';
+    this._measureElement.style.left = '-9999em';
+    this._measureElement.textContent = 'W';
+    this._measureElement.setAttribute('aria-hidden', 'true');
+    this._measureElement.style.width = '150px';
+    this._measureElement.style.height = '150px';
+    this._parentElement.appendChild(this._measureElement);
   }
 
   public getVerticalWidth(): number {
@@ -31,27 +42,6 @@ export class ScrollBarMeasure extends EventEmitter {
   }
 
   public measure(): void {
-    if (!this._measureElement) {
-      this._measureElement = document.createElement('div');
-      this._measureElement.style.visibility = 'hidden';
-      this._measureElement.style.position = 'absolute';
-      this._measureElement.style.top = '0';
-      this._measureElement.style.left = '-9999em';
-      this._measureElement.textContent = 'W';
-      this._measureElement.setAttribute('aria-hidden', 'true');
-      this._measureElement.style.width = '150px';
-      this._measureElement.style.height = '150px';
-      this._parentElement.appendChild(this._measureElement);
-
-      // Perform _doMeasure async if the element was just attached as sometimes
-      // getBoundingClientRect does not return accurate values without this.
-      setTimeout(() => this._doMeasure(), 0);
-    } else {
-      this._doMeasure();
-    }
-  }
-
-  private _doMeasure() {
     const widthWithoutScroll = this._measureElement.offsetWidth;
     const heigthWithoutScroll = this._measureElement.offsetHeight;
 

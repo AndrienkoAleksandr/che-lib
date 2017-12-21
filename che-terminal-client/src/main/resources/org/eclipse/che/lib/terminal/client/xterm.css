@@ -52,11 +52,6 @@
     bottom: 0;
 }
 
-/*.read-only-rows-wrapper {*/
-    /*right: 17px;*/
-    /*bottom: 17px;*/
-/*}*/
-
 .terminal {
     background-color: outputBackgroundColor;
     color: outputFontColor;
@@ -186,10 +181,6 @@
     overflow-y: scroll;
 }
 
-/*.read-only-viewport {*/
-    /*overflow-x: scroll;*/
-/*}*/
-
 .terminal .xterm-wide-char {
     display: inline-block;
 }
@@ -205,6 +196,7 @@
     user-select: text;
     -moz-user-select: text;
     -webkit-user-select: text;
+
     left: 0;
     right: 0;
     bottom: 0;
