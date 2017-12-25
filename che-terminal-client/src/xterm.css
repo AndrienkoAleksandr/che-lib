@@ -48,11 +48,6 @@
     bottom: 0;
 }
 
-/*.read-only-rows-wrapper {*/
-    /*right: 15px;*/
-    /*bottom: 15px;*/
-/*}*/
-
 .terminal {
     background-color: #000;
     color: #fff;
@@ -178,11 +173,6 @@
     background-color: #000;
     overflow-y: scroll;
 }
-
-/*.read-only-viewport {*/
-    /*overflow-x: scroll;*/
-/*}*/
-
 .terminal .xterm-wide-char {
     display: inline-block;
 }
@@ -198,6 +188,7 @@
     user-select: text;
     -moz-user-select: text;
     -webkit-user-select: text;
+
     left: 0;
     right: 0;
     bottom: 0;
@@ -1740,7 +1731,30 @@
 
 .terminal .xterm-bg-color-186 {
     background-color: #d7d787;
-}
+"files": [ 
+    "*.js", 
+    "*.json", 
+    "dist/*.css", 
+    "dist/**/*.css", 
+    "dist/*.js", 
+    "dist/*.js.map", 
+    "dist/**/*.js", 
+    "dist/**/*.js.map", 
+    "lib/*.css", 
+    "lib/**/*.css", 
+    "lib/*.js", 
+    "lib/*.js.map", 
+    "lib/**/*.js", 
+    "lib/**/*.js.map", 
+    "src/*.css", 
+    "src/**/*.css", 
+    "src/*.js", 
+    "src/*.js.map", 
+    "src/*.ts", 
+    "src/**/*.js", 
+    "src/**/*.js.map", 
+    "src/**/*.ts" 
+  ],
 
 .terminal .xterm-color-187 {
     color: #d7d7af;
@@ -2017,7 +2031,7 @@
 .terminal .xterm-color-221 {
     color: #ffd75f;
 }
-
+}
 .terminal .xterm-bg-color-221 {
     background-color: #ffd75f;
 }
