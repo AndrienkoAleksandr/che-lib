@@ -50,14 +50,9 @@ export class InputHandler implements IInputHandler {
 
       // goto next line if ch would overflow
       // TODO: needs a global min terminal width of 2
-      if (this._terminal.x + ch_width - 1 >= this._terminal.cols) {
+      if (this._terminal.x + ch_width - 1 >= this._terminal.cols && !this._terminal.readOnly) {
         // autowrap - DECAWM
-        if (this._terminal.readOnly) {
-          if (this._terminal.maxLineWidth === 0) {
-            this._terminal.maxLineWidth = this._terminal.cols;
-          }
-          this._terminal.maxLineWidth++;
-        } else if (this._terminal.wraparoundMode) {
+        if (this._terminal.wraparoundMode) {
           this._terminal.x = 0;
           this._terminal.y++;
           if (this._terminal.y > this._terminal.scrollBottom) {
@@ -69,12 +64,6 @@ export class InputHandler implements IInputHandler {
             return;
         }
       }
-      // move this code, I guess it should not be here, but width tracking
-      // if (this._terminal.maxLineWidth <= this._terminal.cols) {
-      //   let availableWidth = this._terminal.parent.clientWidth - this._terminal.scrollBarMeasure.getHorizontalWidth();
-      //   this._terminal.maxLineWidth = Math.floor(availableWidth / this._terminal.charMeasure.width);
-      // }
-      // console.log('Max line width = ' + this._terminal.maxLineWidth);
 
       // insert mode: move characters to right
       if (this._terminal.insertMode) {
@@ -101,6 +90,9 @@ export class InputHandler implements IInputHandler {
       if (ch_width === 2) {
         this._terminal.lines.get(row)[this._terminal.x] = [this._terminal.curAttr, '', 0];
         this._terminal.x++;
+      }
+      if (this._terminal.readOnly && this._terminal.maxLineWidth < this._terminal.x) {
+        this._terminal.maxLineWidth = this._terminal.x;
       }
     }
   }

@@ -2,7 +2,7 @@ var term;
 
 Split(['#left', '#right'], {
   direction: 'horizontal',
-  sizes: [50, 50],
+  sizes: [85.635, 14.365],
   minSize: 1
 });
 
@@ -68,7 +68,6 @@ function resize() {
   function Resize(e) {
       terminalContainer.style.width = terminalContainer.parentNode.parentElement.width;
       terminalContainer.style.height = terminalContainer.parentNode.parentElement.height;
-      console.log(terminalContainer.style.width);
       resizeTerminal();
     }
 
@@ -82,7 +81,7 @@ resize();
 
 function resizeTerminal() {
   var initialGeometry = term.proposeGeometry(),
-  cols = term.maxLineLength();//term.maxLineWidth,
+  cols =  Math.max(initialGeometry.cols, term.maxLineWidth);
   rows = initialGeometry.rows;
   console.log("Resize: cols= " + cols);
   term.resize(cols, rows);
@@ -105,20 +104,32 @@ function createTerminal() {
     tabStopWidth: parseInt(optionElements.tabstopwidth.value, 10)
   });
 
+  for (i = 1; i <= 2; i++) {
+    term.writeln("test " + i);
+  }
+  term.writeln("hello0 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy oooooooooooooooooooooooooo yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyy  yyyyyyyyyyyyyyyyyyyyyyyyyy popup1");
+  term.writeln("test 3");
+
   term.open(terminalContainer);
+  resizeTerminal();
+  // cols = term.maxLineLength();//term.maxLineWidth,
+
+  // var geometry = term.proposeGeometry();
+  // term.resize(geometry.cols, geometry.rows);
 
   // console.log("Rows after fit: " + term.rows);
   // console.log("Cols after fit: " + term.cols);
 
-  setTimeout(function() {
+  // setTimeout(function() {
     // var geometry = term.fit();
     // console.log(term.parent.clientHeight);
-    console.log("height:= " + Math.floor((term.parent.clientHeight - term.scrollBarMeasure.getHorizontalWidth())/term.charMeasure.height));
-    console.log("width:= " + Math.floor((term.parent.clientWidth - term.scrollBarMeasure.getVerticalWidth())/term.charMeasure.width));
+    // console.log("height:= " + Math.floor((term.parent.clientHeight - term.scrollBarMeasure.getHorizontalWidth())/term.charMeasure.height));
+    // console.log("width:= " + Math.floor((term.parent.clientWidth - term.scrollBarMeasure.getVerticalWidth())/term.charMeasure.width));
 
-    var newRows = Math.floor((term.parent.clientHeight - term.scrollBarMeasure.getHorizontalWidth())/term.charMeasure.height);
-    var newCols = Math.floor((term.parent.clientWidth - term.scrollBarMeasure.getVerticalWidth())/term.charMeasure.width);
-    term.resize(newCols, newRows);
+    // var newRows = Math.floor((term.parent.clientHeight - term.scrollBarMeasure.getHorizontalWidth())/term.charMeasure.height);
+    // var newCols = Math.floor((term.parent.clientWidth - term.scrollBarMeasure.getVerticalWidth())/term.charMeasure.width);
+    // term.resize(newCols, newRows);
+
 
     // term.writeln("testA");
     // term.writeln("testB");
@@ -132,10 +143,9 @@ function createTerminal() {
     // // term.writeln("Test for test");
     // term.writeln("\u001B[31;1;4mTest\u001B[0mffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffkkk8");
     // var i;
-    for (i = 1; i <= 20; i++) {
-      term.writeln("test " + i);
-    }
-    console.log(term.maxLineLength() + " ~!!!!!!!!!!!!!!!!!!!!!!!!!!!!111");
+
+    //term.writeln("oooooooooooooooooooooooooooooooooooooooooooooffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffkkk8yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy0");
+    // console.log(term.maxLineLength() + " ~!!!!!!!!!!!!!!!!!!!!!!!!!!!!111");
     //
     // term.writeln("first line");
     //
@@ -172,14 +182,14 @@ function createTerminal() {
     // });
     // console.log(max);
     // console.log("____________________________________________");
-    console.log(this.term.lines);
+    //console.log(this.term.lines);
 
-    setTimeout(function () {
-      console.log("Max line length " + this.term.maxLineLength());
-      console.log(this.term.cols)
-    }, 1000);
+    // setTimeout(function () {
+    //   console.log("Max line length " + this.term.maxLineLength());
+    //   console.log(this.term.cols);
+    // }, 1000);
 
 
-  }, 0);
+  // }, 0);
 
 }

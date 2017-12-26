@@ -726,6 +726,13 @@ Terminal.prototype.open = function(parent) {
   this.emit('open');
 };
 
+Terminal.prototype.print = function () {
+  console.log("--------Print lines Begin----------");
+  console.log(this.lines);
+  console.log(this.options);
+  console.log("--------Print lines End----------");
+};
+
 
 /**
  * Attempts to load an add-on using CommonJS or RequireJS (whichever is available).
