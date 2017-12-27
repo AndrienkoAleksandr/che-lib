@@ -2094,6 +2094,22 @@ Terminal.prototype.maxLineLength = function() {
   return max;
 };
 
+Terminal.prototype.getText = function() {
+  var content = "";
+  this.lines._array.forEach(
+    function(line) {
+      var lineContent = "";
+      for (var i = 0; i < line.length; i++) {
+        lineContent += line[i][1];
+      }
+      lineContent = lineContent.trim();
+      if (lineContent) {
+        content += lineContent + "\r\n";
+      }
+    });
+  return content;
+};
+
 /**
  * Return the data array of a blank line
  * @param {number} cur First bunch of data for each "blank" character.

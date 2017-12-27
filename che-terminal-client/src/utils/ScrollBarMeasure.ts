@@ -26,19 +26,18 @@ export class ScrollBarMeasure extends EventEmitter {
     this._measureElement.style.position = 'absolute';
     this._measureElement.style.top = '0';
     this._measureElement.style.left = '-9999em';
-    this._measureElement.textContent = 'W';
     this._measureElement.setAttribute('aria-hidden', 'true');
-    this._measureElement.style.width = '150px';
-    this._measureElement.style.height = '150px';
+    this._measureElement.style.width = '50px';
+    this._measureElement.style.height = '50px';
     this._parentElement.appendChild(this._measureElement);
   }
 
   public getVerticalWidth(): number {
-    return this._verticalWidth;
+    return this._verticalWidth || 17;
   }
 
   public getHorizontalWidth(): number {
-    return this._horizontalWidth;
+    return this._horizontalWidth || 17;
   }
 
   public measure(): void {
@@ -69,7 +68,6 @@ export class ScrollBarMeasure extends EventEmitter {
     if (this._verticalWidth !== verticalWidth || this._horizontalWidth !== horizontalWidth) {
       this._verticalWidth = verticalWidth;
       this._horizontalWidth = horizontalWidth;
-      console.log('Measure scrollBar: ' + this._verticalWidth + ' ' + this._horizontalWidth);
       this.emit('scrollbarsizechanged');
     }
   }

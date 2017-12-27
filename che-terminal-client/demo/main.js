@@ -2,7 +2,7 @@ var term;
 
 Split(['#left', '#right'], {
   direction: 'horizontal',
-  sizes: [85.635, 14.365],
+  sizes: [50, 50],
   minSize: 1
 });
 
@@ -83,7 +83,7 @@ function resizeTerminal() {
   var initialGeometry = term.proposeGeometry(),
   cols =  Math.max(initialGeometry.cols, term.maxLineWidth);
   rows = initialGeometry.rows;
-  console.log("Resize: cols= " + cols);
+  //console.log("Resize: cols= " + cols);
   term.resize(cols, rows);
 }
 
@@ -107,7 +107,7 @@ function createTerminal() {
   for (i = 1; i <= 2; i++) {
     term.writeln("test " + i);
   }
-  term.writeln("hello0 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy oooooooooooooooooooooooooo yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyy  yyyyyyyyyyyyyyyyyyyyyyyyyy popup1");
+  //term.writeln("hello0 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy oooooooooooooooooooooooooo yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyy  yyyyyyyyyyyyyyyyyyyyyyyyyy popup1");
   term.writeln("test 3");
 
   term.open(terminalContainer);
