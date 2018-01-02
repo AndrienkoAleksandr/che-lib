@@ -1946,7 +1946,12 @@ Terminal.prototype.resize = function(x, y) {
   this.scrollTop = 0;
   this.scrollBottom = y - 1;
 
-  this.charMeasure.measure();
+  if (this.charMeasure) {
+    this.charMeasure.measure();
+  }
+  if (this.scrollBarMeasure) {
+    this.scrollBarMeasure.measure();
+  }
 
   this.refresh(0, this.rows - 1);
 
