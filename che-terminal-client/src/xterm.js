@@ -158,7 +158,7 @@ function Terminal(options) {
   /**
    * vertical scroll width in readOnly mode.
    */
-  this.maxLineWidth = 0; // to check after reset...
+  this.maxLineWidth = 0;
 
   this.cursorState = 0;
   this.cursorHidden = false;
