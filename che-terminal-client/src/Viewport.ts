@@ -73,12 +73,6 @@ export class Viewport {
         this.lastRecordedViewportWidth = quantityRowSymbols;
         this.scrollArea.style.width =  Math.ceil(quantityRowSymbols * this.charMeasure.width) + 'px';
       }
-
-      let newScrollAreaHeight = Math.ceil(this.charMeasure.height * this.lastRecordedBufferLength);
-      if (this.terminal.readOnly) {
-        newScrollAreaHeight += this.scrollBarMeasure.getHorizontalWidth();
-      }
-      this.scrollArea.style.height = newScrollAreaHeight + 'px';
     }
   }
 
