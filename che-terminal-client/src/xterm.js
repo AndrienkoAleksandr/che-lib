@@ -1302,8 +1302,7 @@ Terminal.prototype.innerWrite = function() {
 
     if (this.maxLineWidth > this.cols && this.readOnly) {
       this.updateRange(this.y);
-      console.log("before resize");
-      this.resize(this.maxLineWidth, this.rows);// todo resize?
+      this.resize(this.maxLineWidth, this.rows);
     } {
       this.updateRange(this.y);
       this.refresh(this.refreshStart, this.refreshEnd);
