@@ -21,6 +21,7 @@ import { Parser } from './Parser';
 import { Renderer } from './Renderer';
 import { Linkifier } from './Linkifier';
 import { CharMeasure } from './utils/CharMeasure';
+import { ScrollBarMeasure } from './utils/ScrollBarMeasure';
 import * as Browser from './utils/Browser';
 import * as Keyboard from './utils/Keyboard';
 import { CHARSETS } from './Charsets';
@@ -126,6 +127,7 @@ function Terminal(options) {
   this.cols = options.cols || options.geometry[0];
   this.rows = options.rows || options.geometry[1];
   this.focusOnOpen = options.focusOnOpen;
+  this.readOnly = options.readOnly;
   this.geometry = [this.cols, this.rows];
 
   if (options.handler) {
@@ -152,6 +154,11 @@ function Terminal(options) {
    * The cursor's y position after ybase
    */
   this.y = 0;
+
+  /**
+   * vertical scroll width in readOnly mode.
+   */
+  this.maxLineWidth = 0;
 
   this.cursorState = 0;
   this.cursorHidden = false;
@@ -360,7 +367,8 @@ Terminal.defaults = {
   disableStdin: false,
   useFlowControl: false,
   tabStopWidth: 8,
-  focusOnOpen: true
+  focusOnOpen: true,
+  readOnly: false
   // programFeatures: false,
   // focusKeys: false,
 };
@@ -444,6 +452,7 @@ Terminal.prototype.setOption = function(key, value) {
       this.element.classList.toggle(`xterm-cursor-style-bar`, value === 'bar');
       break;
     case 'tabStopWidth': this.setupStops(); break;
+    case 'readOnly': this.readOnly = value;
   }
 };
 
@@ -502,12 +511,14 @@ Terminal.prototype.initGlobal = function() {
   on(this.element, 'copy', function (ev) {
     copyHandler.call(this, ev, term);
   });
-  on(this.textarea, 'paste', function (ev) {
-    pasteHandler.call(this, ev, term);
-  });
-  on(this.element, 'paste', function (ev) {
-    pasteHandler.call(this, ev, term);
-  });
+  if (!this.options.readOnly) {
+    on(this.textarea, 'paste', function (ev) {
+      pasteHandler.call(this, ev, term);
+    });
+    on(this.element, 'paste', function (ev) {
+      pasteHandler.call(this, ev, term);
+    });
+  }
 
   function rightClickHandlerWrapper (ev) {
     rightClickHandler.call(this, ev, term);
@@ -610,7 +621,6 @@ Terminal.prototype.open = function(parent) {
   this.element.classList.add('xterm-theme-' + this.theme);
   this.element.classList.toggle('xterm-cursor-blink', this.options.cursorBlink);
 
-  this.element.style.height
   this.element.setAttribute('tabindex', 0);
 
   this.viewportElement = document.createElement('div');
@@ -624,7 +634,12 @@ Terminal.prototype.open = function(parent) {
   // produce the lines the lines.
   this.rowContainer = document.createElement('div');
   this.rowContainer.classList.add('xterm-rows');
-  this.element.appendChild(this.rowContainer);
+
+  this.rowContainerWrapper = document.createElement('div');
+  this.rowContainerWrapper.classList.add("rows-wrapper");
+  this.rowContainerWrapper.appendChild(this.rowContainer);
+  this.element.appendChild(this.rowContainerWrapper);
+
   this.children = [];
   this.linkifier = new Linkifier(document, this.children);
 
@@ -667,7 +682,14 @@ Terminal.prototype.open = function(parent) {
   });
   this.charMeasure.measure();
 
-  this.viewport = new Viewport(this, this.viewportElement, this.viewportScrollArea, this.charMeasure);
+  this.scrollBarMeasure = new ScrollBarMeasure(document, this.helperContainer);
+  this.scrollBarMeasure.on('scrollbarsizechanged', function () {
+    self.rowContainerWrapper.style.right = self.scrollBarMeasure.getVerticalWidth() + "px";
+    self.updateReadOnlyCSS();
+  });
+  this.scrollBarMeasure.measure();
+
+  this.viewport = new Viewport(this, this.viewportElement, this.viewportScrollArea, this.charMeasure, this.scrollBarMeasure);
   this.renderer = new Renderer(this);
 
   // Setup loop that draws to screen
@@ -726,6 +748,17 @@ Terminal.loadAddon = function(addon, callback) {
 Terminal.prototype.updateCharSizeCSS = function() {
   this.charSizeStyleElement.textContent = '.xterm-wide-char{width:' + (this.charMeasure.width * 2) + 'px;}';
 }
+
+Terminal.prototype.updateReadOnlyCSS = function () {
+  if (this.readOnly) {
+    this.viewportElement.style.overflowX = "scroll";
+    this.viewportElement.style.bottom = 0 + "px";
+    this.viewportElement.style.top = "initial";
+
+    this.rowContainerWrapper.style.top = "initial";
+    this.rowContainerWrapper.style.bottom = this.scrollBarMeasure.getHorizontalWidth() + "px";
+  }
+};
 
 /**
  * XTerm mouse events
@@ -1097,7 +1130,7 @@ Terminal.prototype.queueLinkification = function(start, end) {
  * Display the cursor element
  */
 Terminal.prototype.showCursor = function() {
-  if (!this.cursorState) {
+  if (!this.cursorState && !this.options.readOnly) {
     this.cursorState = 1;
     this.refresh(this.y, this.y);
   }
@@ -1191,6 +1224,14 @@ Terminal.prototype.scrollDisp = function(disp, suppressScrollEvent) {
   this.refresh(0, this.rows - 1);
 };
 
+Terminal.prototype.scrollHome = function () {
+  this.scrollDisp(-this.ydisp, false);
+};
+
+Terminal.prototype.scrollEnd = function () {
+  this.scrollDisp(this.lines.length - this.rows - this.ydisp, false);
+};
+
 /**
  * Scroll the display of the terminal by a number of pages.
  * @param {number} pageCount The number of pages to scroll (negative scrolls up).
@@ -1259,8 +1300,13 @@ Terminal.prototype.innerWrite = function() {
 
     this.parser.parse(data);
 
-    this.updateRange(this.y);
-    this.refresh(this.refreshStart, this.refreshEnd);
+    if (this.maxLineWidth > this.cols && this.readOnly) {
+      this.updateRange(this.y);
+      this.resize(this.maxLineWidth, this.rows);
+    } {
+      this.updateRange(this.y);
+      this.refresh(this.refreshStart, this.refreshEnd);
+    }
   }
   if (this.writeBuffer.length > 0) {
     // Allow renderer to catch up before processing the next batch
@@ -1794,6 +1840,10 @@ Terminal.prototype.resize = function(x, y) {
     return;
   }
 
+  if (this.readOnly && this.charMeasure && this.charMeasure.height > 0) {
+    this.rowContainerWrapper.style.height = y * this.charMeasure.height + "px";
+  }
+
   var line
   , el
   , i
@@ -1892,7 +1942,12 @@ Terminal.prototype.resize = function(x, y) {
   this.scrollTop = 0;
   this.scrollBottom = y - 1;
 
-  this.charMeasure.measure();
+  if (this.charMeasure) {
+    this.charMeasure.measure();
+  }
+  if (this.scrollBarMeasure) {
+    this.scrollBarMeasure.measure();
+  }
 
   this.refresh(0, this.rows - 1);
 
@@ -2038,6 +2093,31 @@ Terminal.prototype.eraseLine = function(y) {
   this.eraseRight(0, y);
 };
 
+Terminal.prototype.maxLineLength = function() {
+  var max = 0;
+  this.lines._array.forEach(function(elem) {
+    if (max < elem.length) {
+      max = elem.length;
+    }
+  });
+  return max;
+};
+
+Terminal.prototype.getText = function() {
+  var content = "";
+  this.lines._array.forEach(
+    function(line) {
+      var lineContent = "";
+      for (var i = 0; i < line.length; i++) {
+        lineContent += line[i][1];
+      }
+      lineContent = lineContent.trim();
+      if (lineContent) {
+        content += lineContent + "\r\n";
+      }
+    });
+  return content;
+};
 
 /**
  * Return the data array of a blank line
@@ -2161,6 +2241,13 @@ Terminal.prototype.reverseIndex = function() {
 Terminal.prototype.reset = function() {
   this.options.rows = this.rows;
   this.options.cols = this.cols;
+  if (this.readOnly) {
+    var cols = Math.floor(this.rowContainerWrapper.clientWidth / this.charMeasure.width);
+    if (this.maxLineWidth > cols) {
+      this.maxLineWidth = 0;
+      this.options.cols = cols;
+    }
+  }
   var customKeydownHandler = this.customKeydownHandler;
   var normal = this.normal;
   Terminal.call(this, this.options);

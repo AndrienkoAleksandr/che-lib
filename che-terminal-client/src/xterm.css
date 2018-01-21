@@ -35,10 +35,6 @@
  *  Default style for xterm.js
  */
 
-@eval outputBackgroundColor org.eclipse.che.ide.api.theme.Style.theme.outputBackgroundColor();
-@eval blueIconColor org.eclipse.che.ide.api.theme.Style.theme.getBlueIconColor();
-@eval outputFontColor org.eclipse.che.ide.api.theme.Style.theme.getOutputFontColor();
-
 .rows-wrapper {
     position: absolute;
     overflow: hidden;
@@ -53,8 +49,8 @@
 }
 
 .terminal {
-    background-color: outputBackgroundColor;
-    color: outputFontColor;
+    background-color: #000;
+    color: #fff;
     font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
     font-feature-settings: "liga" 0;
     font-size: 11px;
@@ -105,19 +101,18 @@
     text-decoration: none;
 }
 
-/* Warning: GWT contains bug with parsing CSS pseudo selectors, so we escapes this elements by "\" */
-.terminal.focus:not\(\.xterm-cursor-style-underline\):not\(\.xterm-cursor-style-bar\) .terminal-cursor {
-    background-color: blueIconColor;
-    color: outputBackgroundColor;
+.terminal:not(.xterm-cursor-style-underline):not(.xterm-cursor-style-bar) .terminal-cursor {
+    background-color: #fff;
+    color: #000;
 }
 
-.terminal:not\(\.focus\) .terminal-cursor {
-    outline: 1px solid blueIconColor;
+.terminal:not(.focus) .terminal-cursor {
+    outline: 1px solid #fff;
     outline-offset: -1px;
     background-color: transparent;
 }
 
-.terminal:not\(\.xterm-cursor-style-underline\):not\(\.xterm-cursor-style-bar\).focus.xterm-cursor-blink .terminal-cursor {
+.terminal:not(.xterm-cursor-style-underline):not(.xterm-cursor-style-bar).focus.xterm-cursor-blink .terminal-cursor {
     animation: xterm-cursor-blink 1.2s infinite step-end;
 }
 
@@ -125,7 +120,7 @@
     0% { }
     50% {
         background-color: transparent;
-        color: blueIconColor;
+        color: inherit;
     }
 }
 
@@ -138,7 +133,7 @@
     content: "";
     display: block;
     position: absolute;
-    background-color: blueIconColor;
+    background-color: #fff;
 }
 .terminal.xterm-cursor-style-bar .terminal-cursor::before {
     top: 0;
@@ -157,14 +152,13 @@
     animation: xterm-cursor-non-bar-blink 1.2s infinite step-end;
 }
 @keyframes xterm-cursor-non-bar-blink {
-    0% { background-color: blueIconColor; }
+    0% { background-color: #fff; }
     50% { background-color: transparent; }
 }
 
 .terminal .composition-view {
-    background: outputBackgroundColor;
-    /*todo it's a problem seems*/
-    color: outputFontColor;
+    background: #000;
+    color: #FFF;
     display: none;
     position: absolute;
     white-space: nowrap;
@@ -177,7 +171,7 @@
 
 .terminal .xterm-viewport {
     /* On OS X this is required in order for the scroll bar to appear fully opaque */
-    background-color: outputBackgroundColor;
+    background-color: #000;
     overflow-y: scroll;
     overflow-x: hidden;
 
@@ -186,7 +180,6 @@
     left: 0;
     right: 0;
 }
-
 .terminal .xterm-wide-char {
     display: inline-block;
 }
@@ -205,12 +198,20 @@
 
     left: 0;
     right: 0;
+    bottom: 0;
     top: 0;
+
+    /*white-space: pre;*/
+    /*word-wrap: normal;*/
+    /*tab-size: 4;*/
+    /*left: 2px;*/
+    /*top: 4px;*/
 }
 
 .terminal .xterm-rows > div {
     /* Lines containing spans and text nodes ocassionally wrap despite being the same width (#327) */
     white-space: nowrap;
+    /*float: left;*/
 }
 
 .terminal .xterm-scroll-area {

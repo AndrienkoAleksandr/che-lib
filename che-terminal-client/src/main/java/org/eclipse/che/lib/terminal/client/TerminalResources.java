@@ -18,4 +18,7 @@ public interface TerminalResources extends ClientBundle {
   @CssResource.NotStrict
   @Source({"xterm.css"})
   CssResource getTerminalStyle();
+
+  @Source("xterm.js")
+  TextResource xtermScript();
 }

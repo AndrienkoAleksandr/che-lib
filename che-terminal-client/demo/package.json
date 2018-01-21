@@ -1,0 +1,22 @@
+{
+  "name": "xterm",
+  "description": "Full xterm terminal, in your browser",
+  "version": "2.4.0",
+  "ignore": [
+    "demo",
+    "test",
+    ".gitignore"
+  ],
+  "main": "lib/xterm.js",
+  "repository": "https://github.com/sourcelair/xterm.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "6.0.41",
+    "express": "4.13.4",
+    "express-ws": "2.0.0-rc.1",
+    "node-pty": "^0.4.1"
+  },
+  "scripts": {
+    "start": "node app"
+  }
+}
