@@ -39,14 +39,27 @@
 @eval blueIconColor org.eclipse.che.ide.api.theme.Style.theme.getBlueIconColor();
 @eval outputFontColor org.eclipse.che.ide.api.theme.Style.theme.getOutputFontColor();
 
+.rows-wrapper {
+    position: absolute;
+    overflow: hidden;
+    margin: 0px;
+    border-width: 0px;
+    padding: 0px;
+    background: transparent;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+
 .terminal {
     background-color: outputBackgroundColor;
     color: outputFontColor;
-    border-color: transparent;
     font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
     font-feature-settings: "liga" 0;
     font-size: 11px;
     position: relative;
+    height: 100%;
 }
 
 .terminal.focus,
@@ -166,6 +179,12 @@
     /* On OS X this is required in order for the scroll bar to appear fully opaque */
     background-color: outputBackgroundColor;
     overflow-y: scroll;
+    overflow-x: hidden;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
 .terminal .xterm-wide-char {
@@ -174,11 +193,19 @@
 
 .terminal .xterm-rows {
     position: absolute;
-    left: 0;
-    top: 0;
+    border-width: 0px;
+    margin: 0px;
+    padding: 0px;
+    outline: none;
+    z-index: 1;
+
+    user-select: text;
     -moz-user-select: text;
     -webkit-user-select: text;
-    user-select: text;
+
+    left: 0;
+    right: 0;
+    top: 0;
 }
 
 .terminal .xterm-rows > div {
